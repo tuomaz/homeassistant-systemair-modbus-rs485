@@ -1,8 +1,9 @@
 """Support for Systemair SAVE Modbus RS485 Switches."""
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Any
-from homeassistant.components.switch import SwitchEntity
+from homeassistant.components.switch import SwitchEntity, SwitchEntityDescription
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
@@ -16,6 +17,46 @@ from .const import (
     LOGGER,
 )
 
+@dataclass(frozen=True, kw_only=True)
+class SystemairSwitchEntityDescription(SwitchEntityDescription):
+    """Class describing Systemair switch entities."""
+
+    hmi_val: int
+    active_val: int
+
+SWITCHES: tuple[SystemairSwitchEntityDescription, ...] = (
+    SystemairSwitchEntityDescription(
+        key="fireplace",
+        name="VSR500 brasläge",
+        hmi_val=5,
+        active_val=4,
+    ),
+    SystemairSwitchEntityDescription(
+        key="away",
+        name="VSR500 borta",
+        hmi_val=6,
+        active_val=5,
+    ),
+    SystemairSwitchEntityDescription(
+        key="holiday",
+        name="VSR500 semester",
+        hmi_val=7,
+        active_val=6,
+    ),
+    SystemairSwitchEntityDescription(
+        key="crowded",
+        name="VSR500 fest",
+        hmi_val=3,
+        active_val=2,
+    ),
+    SystemairSwitchEntityDescription(
+        key="refresh",
+        name="VSR500 refresh",
+        hmi_val=4,
+        active_val=3,
+    ),
+)
+
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: ConfigEntry,
@@ -26,20 +67,32 @@ async def async_setup_entry(
     coordinator = data["coordinator"]
     hub = data["hub"]
 
-    async_add_entities([SystemairFireplaceSwitch(coordinator, hub, entry)], True)
+    entities = [
+        SystemairSwitch(coordinator, description, entry, hub)
+        for description in SWITCHES
+    ]
+    async_add_entities(entities, True)
 
-class SystemairFireplaceSwitch(CoordinatorEntity, SwitchEntity):
-    """Switch to toggle Fireplace Mode (brasläge) on Systemair SAVE."""
+class SystemairSwitch(CoordinatorEntity, SwitchEntity):
+    """Representation of a Systemair Switch to toggle a user mode."""
 
+    entity_description: SystemairSwitchEntityDescription
     _attr_has_entity_name = True
-    _attr_name = "VSR500 brasläge"
 
-    def __init__(self, coordinator, hub, entry) -> None:
+    def __init__(
+        self,
+        coordinator,
+        description: SystemairSwitchEntityDescription,
+        entry: ConfigEntry,
+        hub: Any,
+    ) -> None:
         """Initialize the switch."""
         super().__init__(coordinator)
+        self.entity_description = description
         self._hub = hub
         self._entry = entry
-        self._attr_unique_id = f"{entry.entry_id}_fireplace_switch"
+        
+        self._attr_unique_id = f"{entry.entry_id}_{description.key}_switch"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},
             name="VSR500 Ventilation",
@@ -49,19 +102,19 @@ class SystemairFireplaceSwitch(CoordinatorEntity, SwitchEntity):
 
     @property
     def is_on(self) -> bool:
-        """Return True if fireplace mode is active."""
-        # Active mode 4 is Fireplace in REG_USERMODE_MODE (0-indexed 1161)
+        """Return True if this specific user mode is active."""
         mode = self.coordinator.data.get(REG_USERMODE_MODE)
-        return mode == 4
+        return mode == self.entity_description.active_val
 
     async def async_turn_on(self, **kwargs: Any) -> None:
-        """Turn fireplace mode ON."""
-        LOGGER.debug("Turning fireplace mode ON (writing 5 to change request)")
-        await self._hub.write_register(REG_USERMODE_HMI_CHANGE_REQUEST, 5)
+        """Turn this user mode ON."""
+        hmi_val = self.entity_description.hmi_val
+        LOGGER.debug("Setting user mode to %s (writing %s to HMI change request)", self.entity_description.name, hmi_val)
+        await self._hub.write_register(REG_USERMODE_HMI_CHANGE_REQUEST, hmi_val)
         await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
-        """Turn fireplace mode OFF."""
-        LOGGER.debug("Turning fireplace mode OFF (writing 0 to change request)")
+        """Turn this user mode OFF (reverts to Auto/Manual / writes 0)."""
+        LOGGER.debug("Deactivating user mode %s (writing 0 to HMI change request)", self.entity_description.name)
         await self._hub.write_register(REG_USERMODE_HMI_CHANGE_REQUEST, 0)
         await self.coordinator.async_request_refresh()
