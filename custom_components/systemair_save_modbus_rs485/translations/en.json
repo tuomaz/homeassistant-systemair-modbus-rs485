@@ -1,0 +1,20 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configure Systemair SAVE Modbus RS485",
+        "description": "Enter the serial port and Modbus RTU details for your Systemair unit.",
+        "data": {
+          "port": "Serial Port (e.g., /dev/vsr500)",
+          "baudrate": "Baud Rate",
+          "slave_address": "Modbus Slave Address (Unit ID)",
+          "scan_interval": "Polling Interval (seconds)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect. Please check your serial port and Modbus address.",
+      "unknown": "Unexpected error occurred."
+    }
+  }
+}
