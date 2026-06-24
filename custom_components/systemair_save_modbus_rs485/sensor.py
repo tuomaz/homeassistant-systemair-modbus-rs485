@@ -149,18 +149,26 @@ SENSORS: tuple[SystemairSensorEntityDescription, ...] = (
     SystemairSensorEntityDescription(
         key="remaining_filter_time",
         name="VSR500 remaning filter time",
-        native_unit_of_measurement=UnitOfTime.SECONDS,
+        native_unit_of_measurement=UnitOfTime.DAYS,
         device_class=SensorDeviceClass.DURATION,
         state_class=SensorStateClass.MEASUREMENT,
-        value_fn=lambda data, hub: (data.get(REG_FILTER_REMAINING_TIME_H, 0) * 65536) + data.get(REG_FILTER_REMAINING_TIME_L, 0),
+        value_fn=lambda data, hub: round(
+            ((data.get(REG_FILTER_REMAINING_TIME_H, 0) * 65536)
+             + data.get(REG_FILTER_REMAINING_TIME_L, 0)) / 86400.0,
+            1,
+        ),
     ),
     SystemairSensorEntityDescription(
         key="time_remaining_user_mode",
         name="VSR500 time remaining user mode",
-        native_unit_of_measurement=UnitOfTime.SECONDS,
+        native_unit_of_measurement=UnitOfTime.MINUTES,
         device_class=SensorDeviceClass.DURATION,
         state_class=SensorStateClass.MEASUREMENT,
-        value_fn=lambda data, hub: (data.get(REG_USERMODE_REMAINING_TIME_H, 0) * 65536) + data.get(REG_USERMODE_REMAINING_TIME_L, 0),
+        value_fn=lambda data, hub: round(
+            ((data.get(REG_USERMODE_REMAINING_TIME_H, 0) * 65536)
+             + data.get(REG_USERMODE_REMAINING_TIME_L, 0)) / 60.0,
+            1,
+        ),
     ),
 
     # Delay settings & configurations
