@@ -34,6 +34,9 @@ from .const import (
     REG_USERMODE_MANUAL_AIRFLOW_LEVEL_SAF,
     REG_USERMODE_HMI_CHANGE_REQUEST,
     REG_RH_TRANSFER,
+    REG_EXTRA_CONTROLLER_PREHEATER_SETPOINT_TYPE,
+    REG_EXTRA_CONTROLLER_PREHEATER_DEACTIVATE_AT_HIGH_OAT,
+    REG_EXTRA_CONTROLLER_PREHEATER_ACTIVATION_T,
     REG_FILTER_PERIOD,
     REG_TRIAC_SHALL_BE_USED,
 )
@@ -150,6 +153,10 @@ class SystemairSaveHub:
         # Block 11: 2001 (User temperature setpoint)
         block11 = await self.read_holding_registers(REG_TC_SP, 1)
 
+        # Block 12: 2418-2428 (Preheater settings)
+        # Note: 2428 - 2418 + 1 = 11 registers
+        block12 = await self.read_holding_registers(REG_EXTRA_CONTROLLER_PREHEATER_SETPOINT_TYPE, 11)
+
         data = {
             # Block 1
             REG_DEMC_RH_HIGHEST: block1[0],
@@ -204,6 +211,11 @@ class SystemairSaveHub:
 
             # Block 11
             REG_TC_SP: block11[0], # 2001
+
+            # Block 12
+            REG_EXTRA_CONTROLLER_PREHEATER_SETPOINT_TYPE: block12[0], # 2418
+            REG_EXTRA_CONTROLLER_PREHEATER_DEACTIVATE_AT_HIGH_OAT: block12[9], # 2427
+            REG_EXTRA_CONTROLLER_PREHEATER_ACTIVATION_T: block12[10], # 2428
         }
         
         return data
