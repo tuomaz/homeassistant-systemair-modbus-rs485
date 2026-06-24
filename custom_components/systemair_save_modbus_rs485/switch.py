@@ -68,12 +68,12 @@ USER_MODE_SWITCHES: tuple[SystemairUserModeSwitchDescription, ...] = (
 BINARY_SWITCHES: tuple[SystemairBinarySwitchDescription, ...] = (
     SystemairBinarySwitchDescription(
         key="heater_enabled",
-        name="Eftervärmare",
+        name="Förvärmare (Triac)",
         register=REG_TRIAC_SHALL_BE_USED,
     ),
     SystemairBinarySwitchDescription(
         key="preheater_deactivation_by_oat",
-        name="Förvärmare avaktivering vid hög utetemp",
+        name="Förvärmare auto-avaktivering",
         register=REG_EXTRA_CONTROLLER_PREHEATER_DEACTIVATE_AT_HIGH_OAT,
     ),
 )
