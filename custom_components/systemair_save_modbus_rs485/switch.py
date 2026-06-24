@@ -27,31 +27,31 @@ class SystemairSwitchEntityDescription(SwitchEntityDescription):
 SWITCHES: tuple[SystemairSwitchEntityDescription, ...] = (
     SystemairSwitchEntityDescription(
         key="fireplace",
-        name="VSR500 brasläge",
+        name="Brasläge",
         hmi_val=5,
         active_val=4,
     ),
     SystemairSwitchEntityDescription(
         key="away",
-        name="VSR500 borta",
+        name="Borta",
         hmi_val=6,
         active_val=5,
     ),
     SystemairSwitchEntityDescription(
         key="holiday",
-        name="VSR500 semester",
+        name="Semester",
         hmi_val=7,
         active_val=6,
     ),
     SystemairSwitchEntityDescription(
         key="crowded",
-        name="VSR500 fest",
+        name="Fest",
         hmi_val=3,
         active_val=2,
     ),
     SystemairSwitchEntityDescription(
         key="refresh",
-        name="VSR500 refresh",
+        name="Refresh",
         hmi_val=4,
         active_val=3,
     ),
