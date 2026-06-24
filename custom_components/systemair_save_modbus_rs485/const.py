@@ -44,8 +44,11 @@ REG_FILTER_REMAINING_TIME_H = 7006      # IR (remaining filter time upper 16 bit
 
 # Settings & Commands (Read Write / Holding Registers)
 REG_TC_SP = 2001                        # HR (user temperature setpoint)
+REG_USERMODE_HOLIDAY_TIME = 1101         # HR (Holiday user mode delay time, days)
 REG_USERMODE_AWAY_TIME = 1102           # HR (maps to 1102 0-indexed away time / 1103 fireplace time in config)
-REG_USERMODE_FIREPLACE_TIME = 1103      # HR (Fireplace user mode delay time)
+REG_USERMODE_FIREPLACE_TIME = 1103      # HR (Fireplace user mode delay time, minutes)
+REG_USERMODE_REFRESH_TIME = 1104        # HR (Refresh/Vädring user mode delay time, minutes)
+REG_USERMODE_CROWDED_TIME = 1105        # HR (Crowded/Fest user mode delay time, hours)
 REG_USERMODE_MANUAL_AIRFLOW_LEVEL_SAF = 1131 # HR (current manual / auto fan speed)
 REG_USERMODE_HMI_CHANGE_REQUEST = 1162  # HR (HMI change request, e.g. brasläge / fireplace)
 REG_RH_TRANSFER = 2147                  # HR (RH transfer)

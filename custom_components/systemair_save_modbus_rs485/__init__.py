@@ -16,7 +16,7 @@ from .const import (
 )
 from .hub import SystemairSaveHub
 
-PLATFORMS = ["climate", "sensor", "switch"]
+PLATFORMS = ["climate", "sensor", "switch", "number"]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

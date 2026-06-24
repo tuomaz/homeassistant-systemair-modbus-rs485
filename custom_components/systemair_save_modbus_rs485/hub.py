@@ -25,8 +25,11 @@ from .const import (
     REG_TRIAC_CONTROL_SIGNAL,
     REG_FILTER_REMAINING_TIME_L,
     REG_FILTER_REMAINING_TIME_H,
+    REG_USERMODE_HOLIDAY_TIME,
     REG_USERMODE_AWAY_TIME,
     REG_USERMODE_FIREPLACE_TIME,
+    REG_USERMODE_REFRESH_TIME,
+    REG_USERMODE_CROWDED_TIME,
     REG_TC_SP,
     REG_USERMODE_MANUAL_AIRFLOW_LEVEL_SAF,
     REG_USERMODE_HMI_CHANGE_REQUEST,
@@ -114,9 +117,9 @@ class SystemairSaveHub:
         # Block 1: 1001-1002 (RH highest, CO2 highest)
         block1 = await self.read_holding_registers(REG_DEMC_RH_HIGHEST, 2)
         
-        # Block 2: 1102-1162 (Away time, remaining user mode time, user manual fan speed, HMI mode change)
-        # Note: 1162 - 1102 + 1 = 61 registers
-        block2 = await self.read_holding_registers(REG_USERMODE_AWAY_TIME, 61)
+        # Block 2: 1101-1162 (Holiday, Away, Fireplace, Refresh, Crowded times, remaining user mode time, user manual fan speed, HMI mode change)
+        # Note: 1162 - 1101 + 1 = 62 registers
+        block2 = await self.read_holding_registers(REG_USERMODE_HOLIDAY_TIME, 62)
         
         # Block 3: 2054-2147 (Setpoint supply air, RH transfer)
         # Note: 2147 - 2054 + 1 = 94 registers
@@ -153,13 +156,16 @@ class SystemairSaveHub:
             REG_DEMC_CO2_HIGHEST: block1[1],
             
             # Block 2
-            REG_USERMODE_AWAY_TIME: block2[0], # 1102
-            REG_USERMODE_FIREPLACE_TIME: block2[1], # 1103
-            REG_USERMODE_REMAINING_TIME_L: block2[9], # 1111
-            REG_USERMODE_REMAINING_TIME_H: block2[10], # 1112
-            REG_USERMODE_MANUAL_AIRFLOW_LEVEL_SAF: block2[29], # 1131
-            REG_USERMODE_MODE: block2[59], # 1161
-            REG_USERMODE_HMI_CHANGE_REQUEST: block2[60], # 1162
+            REG_USERMODE_HOLIDAY_TIME: block2[0], # 1101
+            REG_USERMODE_AWAY_TIME: block2[1], # 1102
+            REG_USERMODE_FIREPLACE_TIME: block2[2], # 1103
+            REG_USERMODE_REFRESH_TIME: block2[3], # 1104
+            REG_USERMODE_CROWDED_TIME: block2[4], # 1105
+            REG_USERMODE_REMAINING_TIME_L: block2[10], # 1111
+            REG_USERMODE_REMAINING_TIME_H: block2[11], # 1112
+            REG_USERMODE_MANUAL_AIRFLOW_LEVEL_SAF: block2[30], # 1131
+            REG_USERMODE_MODE: block2[60], # 1161
+            REG_USERMODE_HMI_CHANGE_REQUEST: block2[61], # 1162
             
             # Block 3
             REG_TC_SP_SATC: block3[0], # 2054
