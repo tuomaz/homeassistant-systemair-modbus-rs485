@@ -51,7 +51,7 @@ SWITCHES: tuple[SystemairSwitchEntityDescription, ...] = (
     ),
     SystemairSwitchEntityDescription(
         key="refresh",
-        name="Refresh",
+        name="Vädring",
         hmi_val=4,
         active_val=3,
     ),
